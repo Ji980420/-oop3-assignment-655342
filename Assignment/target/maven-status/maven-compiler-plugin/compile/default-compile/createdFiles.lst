@@ -1,0 +1,6 @@
+org\example\service\MovieService.class
+org\example\client\OmdbClient.class
+org\example\client\TmdbClient.class
+org\example\controller\MovieController.class
+org\example\App.class
+org\example\model\MovieDTO.class
