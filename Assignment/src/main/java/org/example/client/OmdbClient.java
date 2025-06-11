@@ -21,7 +21,7 @@ public class OmdbClient {
         JSONObject json = new JSONObject(response);
         MovieDTO dto = new MovieDTO();
         dto.setTitle(json.optString("Title"));
-        dto.setYear(json.optString("Year"));
+        dto.setReleaseYear(json.optString("Year"));
         dto.setDirector(json.optString("Director"));
         dto.setGenre(json.optString("Genre"));
         return dto;

@@ -4,7 +4,7 @@ import java.util.List;
 
 public class MovieDTO {
     private String title;
-    private String year;
+    private String releaseYear;
     private String director;
     private String genre;
 
@@ -13,23 +13,63 @@ public class MovieDTO {
     private List<String> similarMovieTitles;
 
     // --- Getters and Setters ---
-    public String getTitle() { return title; }
-    public void setTitle(String title) { this.title = title; }
+    public String getTitle() {
+        return title;
+    }
 
-    public String getYear() { return year; }
-    public void setYear(String year) { this.year = year; }
+    public void setTitle(String title) {
+        this.title = title;
+    }
 
-    public String getDirector() { return director; }
-    public void setDirector(String director) { this.director = director; }
+    public String getReleaseYear() {
+        return releaseYear;
+    }
 
-    public String getGenre() { return genre; }
-    public void setGenre(String genre) { this.genre = genre; }
+    public void setReleaseYear(String releaseYear) {
+        this.releaseYear = releaseYear;
+    }
 
-    public List<String> getImageUrls() { return imageUrls; }
-    public void setImageUrls(List<String> imageUrls) { this.imageUrls = imageUrls; }
+    public String getDirector() {
+        return director;
+    }
 
-    public List<String> getSimilarMovieTitles() { return similarMovieTitles; }
+    public void setDirector(String director) {
+        this.director = director;
+    }
+
+    public String getGenre() {
+        return genre;
+    }
+
+    public void setGenre(String genre) {
+        this.genre = genre;
+    }
+
+    public List<String> getImageUrls() {
+        return imageUrls;
+    }
+
+    public void setImageUrls(List<String> imageUrls) {
+        this.imageUrls = imageUrls;
+    }
+
+    public List<String> getSimilarMovieTitles() {
+        return similarMovieTitles;
+    }
+
     public void setSimilarMovieTitles(List<String> similarMovieTitles) {
         this.similarMovieTitles = similarMovieTitles;
+    }
+
+    @Override
+    public String toString() {
+        return "MovieDTO{" +
+                "title='" + title + '\'' +
+                ", releaseYear='" + releaseYear + '\'' +
+                ", director='" + director + '\'' +
+                ", genre='" + genre + '\'' +
+                ", imageUrls=" + imageUrls +
+                ", similarMovieTitles=" + similarMovieTitles +
+                '}';
     }
 }

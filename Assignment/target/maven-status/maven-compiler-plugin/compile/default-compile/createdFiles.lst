@@ -3,4 +3,6 @@ org\example\client\OmdbClient.class
 org\example\client\TmdbClient.class
 org\example\controller\MovieController.class
 org\example\App.class
+org\example\entity\MovieEntity.class
+org\example\repository\MovieRepository.class
 org\example\model\MovieDTO.class
