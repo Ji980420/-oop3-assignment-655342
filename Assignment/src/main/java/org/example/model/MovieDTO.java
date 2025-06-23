@@ -7,9 +7,10 @@ public class MovieDTO {
     private String releaseYear;
     private String director;
     private String genre;
-
-    // Add these two for TMDB
-    private List<String> imageUrls;
+    private Long id;
+    private List<String> imagePaths; // Add this if you want to match entity, or change controller to use imageUrls
+    private boolean watched;
+    private int rating;
     private List<String> similarMovieTitles;
 
     // --- Getters and Setters ---
@@ -45,12 +46,36 @@ public class MovieDTO {
         this.genre = genre;
     }
 
-    public List<String> getImageUrls() {
-        return imageUrls;
+    public Long getId() {
+        return id;
     }
 
-    public void setImageUrls(List<String> imageUrls) {
-        this.imageUrls = imageUrls;
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public List<String> getImagePaths() {
+        return imagePaths;
+    }
+
+    public void setImagePaths(List<String> imagePaths) {
+        this.imagePaths = imagePaths;
+    }
+
+    public boolean isWatched() {
+        return watched;
+    }
+
+    public void setWatched(boolean watched) {
+        this.watched = watched;
+    }
+
+    public int getRating() {
+        return rating;
+    }
+
+    public void setRating(int rating) {
+        this.rating = rating;
     }
 
     public List<String> getSimilarMovieTitles() {
@@ -68,7 +93,10 @@ public class MovieDTO {
                 ", releaseYear='" + releaseYear + '\'' +
                 ", director='" + director + '\'' +
                 ", genre='" + genre + '\'' +
-                ", imageUrls=" + imageUrls +
+                ", id=" + id +
+                ", imagePaths=" + imagePaths +
+                ", watched=" + watched +
+                ", rating=" + rating +
                 ", similarMovieTitles=" + similarMovieTitles +
                 '}';
     }

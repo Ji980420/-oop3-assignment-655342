@@ -13,6 +13,7 @@ import java.net.URL;
 import java.nio.file.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class TmdbClient {
@@ -83,8 +84,6 @@ public class TmdbClient {
      */
     public List<String> downloadImages(String title) {
         List<String> imageUrls = getImageUrls(title);
-        List<String> savedPaths = new ArrayList<>();
-
         String baseFolder = "src/main/resources/static/images";
         String safeTitle = title.replaceAll("\\s+", "_");
 
@@ -94,19 +93,28 @@ public class TmdbClient {
             throw new RuntimeException("Failed to create image directory", e);
         }
 
-        for (int i = 0; i < imageUrls.size(); i++) {
-            String imageUrl = imageUrls.get(i);
-            String fileName = safeTitle + "_img" + i + ".jpg";
-            Path savePath = Paths.get(baseFolder, fileName);
+        // Download images in parallel
+        return imageUrls.parallelStream()
+            .map(url -> downloadSingleImage(title, url))
+            .collect(Collectors.toList());
+    }
 
-            try (InputStream in = new URL(imageUrl).openStream()) {
+    public String downloadSingleImage(String title, String imageUrl) {
+        String baseFolder = "src/main/resources/static/images";
+        String safeTitle = title.replaceAll("\\s+", "_");
+        String fileName = safeTitle + "_" + imageUrl.hashCode() + ".jpg";
+        Path savePath = Paths.get(baseFolder, fileName);
+
+        try {
+            Files.createDirectories(Paths.get(baseFolder));
+            try (@SuppressWarnings("deprecation")
+            InputStream in = new URL(imageUrl).openStream()) {
                 Files.copy(in, savePath, StandardCopyOption.REPLACE_EXISTING);
-                savedPaths.add("images/" + fileName); // Relative to /static
-            } catch (IOException e) {
-                e.printStackTrace();
+                return "images/" + fileName; // Relative to /static
             }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
         }
-
-        return savedPaths;
     }
 }

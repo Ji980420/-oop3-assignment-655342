@@ -26,17 +26,21 @@ public class MovieEntity {
     @ElementCollection
     private List<String> imagePaths;
 
+    @ElementCollection
+    private List<String> similarMovieTitles;
+
     private boolean watched;
     private int rating;
 
     public MovieEntity(Long id, String title, String releaseYear, String director, String genre,
-            List<String> imagePaths, boolean watched, int rating) {
+            List<String> imagePaths, List<String> similarMovieTitles, boolean watched, int rating) {
         this.id = id;
         this.title = title;
         this.releaseYear = releaseYear;
         this.director = director;
         this.genre = genre;
         this.imagePaths = imagePaths;
+        this.similarMovieTitles = similarMovieTitles;
         this.watched = watched;
         this.rating = rating;
     }
@@ -92,6 +96,14 @@ public class MovieEntity {
         this.imagePaths = imagePaths;
     }
 
+    public List<String> getSimilarMovieTitles() {
+        return similarMovieTitles;
+    }
+
+    public void setSimilarMovieTitles(List<String> similarMovieTitles) {
+        this.similarMovieTitles = similarMovieTitles;
+    }
+
     public boolean isWatched() {
         return watched;
     }
@@ -114,11 +126,13 @@ public class MovieEntity {
     @Override
     public String toString() {
         return "MovieEntity [id=" + id + ", title=" + title + ", releaseYear=" + releaseYear + ", director=" + director
-                + ", genre=" + genre + ", imagePaths=" + imagePaths + ", watched=" + watched + ", rating=" + rating
-                + ", getDirector()=" + getDirector() + ", getGenre()=" + getGenre() + ", getId()=" + getId()
-                + ", getImagePaths()=" + getImagePaths() + ", getRating()=" + getRating() + ", getReleaseYear()="
-                + getReleaseYear() + ", getTitle()=" + getTitle() + ", hashCode()=" + hashCode() + ", isWatched()="
-                + isWatched() + ", getClass()=" + getClass() + ", toString()=" + super.toString() + "]";
+                + ", genre=" + genre + ", imagePaths=" + imagePaths + ", similarMovieTitles=" + similarMovieTitles
+                + ", watched=" + watched + ", rating=" + rating + ", getDirector()=" + getDirector() + ", getGenre()="
+                + getGenre() + ", getId()=" + getId() + ", getImagePaths()=" + getImagePaths() + ", getRating()="
+                + getRating() + ", getReleaseYear()=" + getReleaseYear() + ", getTitle()=" + getTitle()
+                + ", hashCode()="
+                + hashCode() + ", isWatched()=" + isWatched() + ", getClass()=" + getClass() + ", toString()="
+                + super.toString() + "]";
     }
 
     @Override
@@ -160,6 +174,11 @@ public class MovieEntity {
                 return false;
         } else if (!imagePaths.equals(other.imagePaths))
             return false;
+        if (similarMovieTitles == null) {
+            if (other.similarMovieTitles != null)
+                return false;
+        } else if (!similarMovieTitles.equals(other.similarMovieTitles))
+            return false;
         if (watched != other.watched)
             return false;
         if (rating != other.rating)
@@ -177,6 +196,7 @@ public class MovieEntity {
         result = prime * result + ((director == null) ? 0 : director.hashCode());
         result = prime * result + ((genre == null) ? 0 : genre.hashCode());
         result = prime * result + ((imagePaths == null) ? 0 : imagePaths.hashCode());
+        result = prime * result + ((similarMovieTitles == null) ? 0 : similarMovieTitles.hashCode());
         result = prime * result + (watched ? 1231 : 1237);
         result = prime * result + rating;
         return result;

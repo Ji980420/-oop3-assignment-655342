@@ -1,6 +1,10 @@
 // App.java
 package org.example;
 
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
 import org.example.client.OmdbClient;
 import org.example.client.TmdbClient;
 import org.example.model.MovieDTO;
@@ -18,10 +22,27 @@ public class App {
 
         String title = "Inception";
 
-        MovieDTO movie = omdb.getBasicMovieInfo(title);
-        movie.setImageUrls(tmdb.getImageUrls(title));
-        movie.setSimilarMovieTitles(tmdb.getSimilarMovies(title));
+        // Fetch OMDb and TMDb data in parallel
+        CompletableFuture<MovieDTO> omdbFuture = CompletableFuture.supplyAsync(() -> omdb.getBasicMovieInfo(title));
+        CompletableFuture<List<String>> imageUrlsFuture = CompletableFuture.supplyAsync(() -> tmdb.getImageUrls(title));
+        CompletableFuture<List<String>> similarMoviesFuture = CompletableFuture.supplyAsync(() -> tmdb.getSimilarMovies(title));
 
-        System.out.println(movie);
+        try {
+            MovieDTO movie = omdbFuture.get();
+            List<String> imageUrls = imageUrlsFuture.get();
+            List<String> similarMovies = similarMoviesFuture.get();
+
+            // Download images in parallel using Stream API (if you have a download method)
+            List<String> imagePaths = imageUrls.parallelStream()
+                .map(url -> tmdb.downloadSingleImage(title, url))
+                .collect(Collectors.toList());
+
+            movie.setImagePaths(imagePaths);
+            movie.setSimilarMovieTitles(similarMovies);
+
+            System.out.println(movie);
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
     }
 }

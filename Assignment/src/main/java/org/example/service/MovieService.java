@@ -8,6 +8,9 @@ import org.example.repository.MovieRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
 
 @Service
 public class MovieService {
@@ -23,19 +26,40 @@ public class MovieService {
     }
 
     public MovieEntity addMovie(String title) {
-        MovieDTO dto = omdbClient.getBasicMovieInfo(title);
-        List<String> imagePaths = tmdbClient.downloadImages(title);
+        // Fetch OMDb and TMDb data in parallel
+        CompletableFuture<MovieDTO> omdbFuture = CompletableFuture.supplyAsync(() -> omdbClient.getBasicMovieInfo(title));
+        CompletableFuture<List<String>> similarMoviesFuture = CompletableFuture.supplyAsync(() -> tmdbClient.getSimilarMovies(title));
+        CompletableFuture<List<String>> imageUrlsFuture = CompletableFuture.supplyAsync(() -> tmdbClient.getImageUrls(title));
 
-        MovieEntity movie = new MovieEntity();
-        movie.setTitle(dto.getTitle());
-        movie.setReleaseYear(dto.getReleaseYear());
-        movie.setDirector(dto.getDirector());
-        movie.setGenre(dto.getGenre());
-        movie.setImagePaths(imagePaths);
-        movie.setWatched(false);
-        movie.setRating(1);
+        try {
+            MovieDTO dto = omdbFuture.get();
+            List<String> similarMovies = similarMoviesFuture.get();
+            List<String> imageUrls = imageUrlsFuture.get();
 
-        return movieRepository.save(movie);
+            // Download images in parallel using Stream API
+            List<String> imagePaths = imageUrls.parallelStream()
+                .map(url -> tmdbClient.downloadSingleImage(title, url))
+                .collect(Collectors.toList());
+
+            // Optionally process similar movies in parallel (e.g., uppercase for demo)
+            List<String> processedSimilarMovies = similarMovies.parallelStream()
+                .map(String::toUpperCase)
+                .collect(Collectors.toList());
+
+            MovieEntity movie = new MovieEntity();
+            movie.setTitle(dto.getTitle());
+            movie.setReleaseYear(dto.getReleaseYear());
+            movie.setDirector(dto.getDirector());
+            movie.setGenre(dto.getGenre());
+            movie.setImagePaths(imagePaths);
+            movie.setSimilarMovieTitles(processedSimilarMovies);
+            movie.setWatched(false);
+            movie.setRating(1);
+
+            return movieRepository.save(movie);
+        } catch (InterruptedException | ExecutionException e) {
+            throw new RuntimeException("Failed to fetch movie data", e);
+        }
     }
 
     public List<MovieEntity> getMovies(int page, int size) {
