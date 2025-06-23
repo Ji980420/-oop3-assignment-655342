@@ -10,6 +10,13 @@ A simple Spring Boot REST API for managing a movie collection, fetching movie da
 - Rate movies (1–5)
 - Delete movies
 - Download and store movie images
+- **Efficient parallel fetching and processing using Streams API and multithreading**
+- **Comprehensive unit tests for all service methods**
+
+- **Parallel Execution:** OMDb and TMDb data are fetched in parallel using `CompletableFuture` for faster performance.
+- **Streams API:** Movie images are downloaded in parallel using Java Streams API (`parallelStream()`), improving efficiency.
+- **Unit Testing:** All service methods are covered by unit tests using Mockito and JUnit 5.
+- **Clean Architecture:** Business logic is encapsulated in service and client layers, keeping the application modular and maintainable.
 
 ## API Endpoints
 
