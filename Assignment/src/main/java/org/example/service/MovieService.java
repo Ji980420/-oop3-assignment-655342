@@ -27,24 +27,22 @@ public class MovieService {
 
     public MovieEntity addMovie(String title) {
         // Fetch OMDb and TMDb data in parallel
-        CompletableFuture<MovieDTO> omdbFuture = CompletableFuture.supplyAsync(() -> omdbClient.getBasicMovieInfo(title));
-        CompletableFuture<List<String>> similarMoviesFuture = CompletableFuture.supplyAsync(() -> tmdbClient.getSimilarMovies(title));
-        CompletableFuture<List<String>> imageUrlsFuture = CompletableFuture.supplyAsync(() -> tmdbClient.getImageUrls(title));
+        CompletableFuture<MovieDTO> omdbFuture = CompletableFuture
+                .supplyAsync(() -> omdbClient.getBasicMovieInfo(title));
+        CompletableFuture<List<String>> imageUrlsFuture = CompletableFuture
+                .supplyAsync(() -> tmdbClient.getImageUrls(title));
+        CompletableFuture<List<String>> similarMoviesFuture = CompletableFuture
+                .supplyAsync(() -> tmdbClient.getSimilarMovies(title));
 
         try {
             MovieDTO dto = omdbFuture.get();
-            List<String> similarMovies = similarMoviesFuture.get();
             List<String> imageUrls = imageUrlsFuture.get();
+            List<String> similarMovies = similarMoviesFuture.get();
 
             // Download images in parallel using Stream API
             List<String> imagePaths = imageUrls.parallelStream()
-                .map(url -> tmdbClient.downloadSingleImage(title, url))
-                .collect(Collectors.toList());
-
-            // Optionally process similar movies in parallel (e.g., uppercase for demo)
-            List<String> processedSimilarMovies = similarMovies.parallelStream()
-                .map(String::toUpperCase)
-                .collect(Collectors.toList());
+                    .map(url -> tmdbClient.downloadSingleImage(title, url))
+                    .collect(Collectors.toList());
 
             MovieEntity movie = new MovieEntity();
             movie.setTitle(dto.getTitle());
@@ -52,7 +50,7 @@ public class MovieService {
             movie.setDirector(dto.getDirector());
             movie.setGenre(dto.getGenre());
             movie.setImagePaths(imagePaths);
-            movie.setSimilarMovieTitles(processedSimilarMovies);
+            movie.setSimilarMovieTitles(similarMovies);
             movie.setWatched(false);
             movie.setRating(1);
 

@@ -85,8 +85,6 @@ public class TmdbClient {
     public List<String> downloadImages(String title) {
         List<String> imageUrls = getImageUrls(title);
         String baseFolder = "src/main/resources/static/images";
-        String safeTitle = title.replaceAll("\\s+", "_");
-
         try {
             Files.createDirectories(Paths.get(baseFolder));
         } catch (IOException e) {
@@ -95,8 +93,8 @@ public class TmdbClient {
 
         // Download images in parallel
         return imageUrls.parallelStream()
-            .map(url -> downloadSingleImage(title, url))
-            .collect(Collectors.toList());
+                .map(url -> downloadSingleImage(title, url))
+                .collect(Collectors.toList());
     }
 
     public String downloadSingleImage(String title, String imageUrl) {
